@@ -1,5 +1,5 @@
+//random whistle tones
 var x=0;
-//var delay;
 
 function preload() {
   whistle = loadSound("whistle.mp3");

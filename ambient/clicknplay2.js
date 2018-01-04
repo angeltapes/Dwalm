@@ -3,16 +3,7 @@ var x=0;
 
 //var daNote = (random(1));
 var osc1, osc2;
-var startTheTime, endTheTime, startX,startY,endX,endY,moveX,moveY;
-
-function preload() {
-  /*whistle = loadSound("whistle.mp3");
-  kick = loadSound("kick.mp3");
-  bass = loadSound("bass.mp3");
-  clap = loadSound("clap.mp3");
-  voice = loadSound("voice1.mp3");
-  shake = loadSound("shake.mp3");*/
-}
+var startTheTime, endTheTime, startX,startY,endX,endY,moveX,moveY, clap;
 
 function setup() {
   createCanvas(2000, 2000);
@@ -28,19 +19,24 @@ function setup() {
   osc2.setType('triangle');
   osc3.setType('sawtooth');
   osc4.setType('square');
+  clap = loadSound("clap.mp3");
 }
 
 function draw(){
-  background(0);
+  fill(144,100,144);
+  rect(0,0,500,250);
+  fill(100,144,144);
+  rect(500,0,500,250);
 
   fill(255);
   textSize(56);
-  text (frameCount,50,100);
-  text (endTheTime,50,20);
+  text ('Click and drag to start',50,100);
+
   ellipse(startX,startY,50,50);
   rect(endX,endY,50,50);
   fill(144,144,90);
   rect(moveX,moveY,25,25);
+  //if (moveX=2*endX){clap.play(1);};
   if(moveX<endX){moveX++};
   if(moveY<endY){moveY++};
   if(moveX>endX){moveX--};
