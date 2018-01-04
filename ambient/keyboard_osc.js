@@ -60,7 +60,7 @@ function keyTyped() {
     frequency=root*1.66;
   }
   if (key == 'j') {
-    frequency=root*1.74;
+    frequency=root*1.84;
   }
   if (key == 'k') {
     frequency=root*2;

@@ -15,8 +15,8 @@ function setup() {
   createCanvas(2000, 2000);
   frameRate(random(1,4));
   bassOne=[random(2),random(-5,5),random(-5,5),random(0,5),random(2),random(-5,5),random(-5,5),random(-5,5)];
-  kickOne=[1,1,1,0,0,0,0,0];
-  clapOne=[0,0,0,0,1,0,0,0];
+  kickOne=[random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1)];
+  clapOne=[random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1),random(-1,1)];
 }
 
 function draw(){
