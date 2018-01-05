@@ -1,12 +1,13 @@
-var mic, recorder1, soundFile,gotSoundFile,x,loopLength, clap;
+var mic, recorder1, soundFile,gotSoundFile,x,loopLength, kick,delayTime,feedback,filterFrequency,newReverb;
 
 function preload(){
   //create some preloaded percussion
-  clap = loadSound("clap.mp3");
+  kick = loadSound("kick.mp3");
 }
 
 function setup() {
   createCanvas(2000,1000);
+  select('canvas').position(300, 50);
   background(0);
 
   // create an audio in
@@ -23,26 +24,77 @@ function setup() {
 
   // this sound file will be used to
   // playback & save the recording
-  fill(255);
+  fill(255,255,255);
   soundFile = new p5.SoundFile();
-  //text('Press a to record', width/2,200);
-  //text('Press s to play', width/2, 300);
-  //gotSoundFile='false';
+
+  gotSoundFile='false';
   x=9999;
   loopLength=100;
-  //soundPlaying='false';
+  newReverb='false';
+
+  delay = new p5.Delay();
+  delayTime=0;
+  feedback=0.1;
+  filterFrequency=2300;
+
+  reverb = new p5.Reverb();
+  reverbTime=0;
+  reverbDecay=1;
 }
 
 function draw(){
   background(0);
   x++;
-  text(x,50,50);
-  if (x==loopLength){soundFile.play();x=0;}
+  textSize(36);
 
-  //uncomment this to unleash chaos -
-  //if (x==loopLength/2){soundFile.play(0,(random(0,3 )),1,0,10);}
-}
-//soundFile.play(0,random(1,10),1,0,10);
+  if (gotSoundFile=='false'){
+    fill(255,255,255)
+    text("Hold down A to record a loop",50,80);
+  }
+
+  if (gotSoundFile=='true'&&x>loopLength){
+    fill(255,255,0);
+    text("Click S to start looping",50,80)
+  }
+
+  if (gotSoundFile=='true'&&x<=loopLength){
+    fill(0,255,0);
+    text("Progress",50,80);
+    rect(50,100,x,50);
+    text("Loop Length",50,200);
+    rect(50,220,loopLength,50);
+  }
+
+  if(reverbTime>0){
+    fill(0,255,255);
+    text("Reverb Time",50,330);
+    rect(50,350,reverbTime*20,50);
+    text("Reverb Decay",350,330);
+    rect(350,350,reverbDecay*2,50);
+  }
+
+  if(delayTime>0){
+    fill(150,155,255);
+    text("Delay Time",50,460);
+    rect(50,480,delayTime*200,50);
+    text("Feedback",350,460);
+    rect(350,480,feedback*200,50);
+  }
+
+  if (x==loopLength){
+    //fill(0,255,0);
+    //rect(50,100,loopLength,50);
+    if(newReverb=='true'){
+      reverb.process(soundFile,reverbTime,reverbDecay);
+
+
+    };
+
+    soundFile.play();x=0;}
+    if (x==1){kick.play();}
+    delay.process(soundFile, delayTime, feedback, filterFrequency);
+
+  }
 
 function keyTyped() {
   // make sure user enabled the mic
@@ -50,8 +102,8 @@ function keyTyped() {
 if (key == 'a') {
     // record to our p5.SoundFile
     recorder.record(soundFile);
-    fill(random(0,255),random(0,255),random(0,255));
-    ellipse (random(width/2-50,width/2+50),random(height/2-50,height/2+50),50,50)
+    fill(255,0,0);
+    gotSoundFile='true'
   }
 
   if (key == 's') {x=0;}
@@ -68,13 +120,30 @@ if (key == 'a') {
   if (key == 'w') {soundFile.rate(1);}
   if (key == 'e') {soundFile.rate(1.3);}
 
+  //reverb and delay kill switch
+  if (key == 'y'){delayTime=0;feedback=0;reverbTime=0;reverbDecay=0;newReverb='true'}
+
+  //delay.process() accepts 4 parameters:
+  //source, delayTime, feedback, filter frequency
+  if (key == 'u') {if(delayTime<=0.7){delayTime=delayTime+0.1}}
+  if (key == 'j') {if(delayTime>0){delayTime=delayTime-0.1}}
+  if (key == 'i') {if(feedback<=0.7){feedback=feedback+0.1}}
+  if (key == 'k') {if(feedback>0){feedback=feedback-0.1}}
+
+  //connect soundFile to reverb
+  if (key == 'r') {if(reverbTime<=7){if(reverbTime==0){reverb = new p5.Reverb()};reverbTime=reverbTime+1;newReverb='true'}}
+  if (key == 'f') {if(reverbTime>0){reverbTime=reverbTime-1;newReverb='true';if(reverbTime==0){reverb.disconnect()};}}
+  if (key == 't') {if(reverbDecay<=100){reverbDecay=reverbDecay+20;newReverb='true'}}
+  if (key == 'g') {if(reverbDecay>1){reverbDecay=reverbDecay-20;newReverb='true'}}
+
+  //adjust loop length
   if (key == 'p') {loopLength++;}
   if (key == 'l') {loopLength--;}
 }
 
 function keyReleased() {
   recorder.stop();
-  keyEnded=frameCount-keyStarted;
-  text(keyStarted,300,300);
-  text(keyEnded,300,500);
 }
+
+function mouseClicked()
+{fill(255);ellipse(100,100,100,100)}
