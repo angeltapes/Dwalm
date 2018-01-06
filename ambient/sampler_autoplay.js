@@ -1,4 +1,4 @@
-var mic, recorder1, soundFile,gotSoundFile,x,loopLength, kick,delayTime,feedback,filterFrequency,newReverb;
+var mic, recorder1, soundFile,gotSoundFile,x,sampleLength,loopLength,playRate,kick,playKick,kickPosition,sampling,delayTime,feedback,filterFrequency,newReverb;
 
 function preload(){
   //create some preloaded percussion
@@ -24,19 +24,26 @@ function setup() {
 
   // this sound file will be used to
   // playback & save the recording
-  fill(255,255,255);
   soundFile = new p5.SoundFile();
 
+  //general set up
+  fill(255,255,255);
+  sampling='false';
   gotSoundFile='false';
+  playKick='false';
   x=9999;
+  sampleLength=0;
   loopLength=100;
-  newReverb='false';
+  playRate=1;
+  soundFile.rate(playRate);
 
+  //delay set up
   delay = new p5.Delay();
   delayTime=0;
   feedback=0.1;
-  filterFrequency=2300;
 
+  //reverb set up
+  newReverb='false';
   reverb = new p5.Reverb();
   reverbTime=0;
   reverbDecay=1;
@@ -46,6 +53,11 @@ function draw(){
   background(0);
   x++;
   textSize(36);
+  rect(50,100,sampleLength,25);
+
+  if (sampling=='true'){
+    sampleLength++;
+  }
 
   if (gotSoundFile=='false'){
     fill(255,255,255)
@@ -60,9 +72,10 @@ function draw(){
   if (gotSoundFile=='true'&&x<=loopLength){
     fill(0,255,0);
     text("Progress",50,80);
-    rect(50,100,x,50);
-    text("Loop Length",50,200);
-    rect(50,220,loopLength,50);
+    rect(50,125,x,25);
+    fill(100,200,100);
+    text("Loop Length",50,230);
+    rect(50,180,loopLength,10);
   }
 
   if(reverbTime>0){
@@ -86,12 +99,11 @@ function draw(){
     //rect(50,100,loopLength,50);
     if(newReverb=='true'){
       reverb.process(soundFile,reverbTime,reverbDecay);
-
-
     };
 
+    soundFile.rate(playRate);
     soundFile.play();x=0;}
-    if (x==1){kick.play();}
+    if (x==kickPosition&&playKick=='true'){kick.play()};
     delay.process(soundFile, delayTime, feedback, filterFrequency);
 
   }
@@ -100,6 +112,11 @@ function keyTyped() {
   // make sure user enabled the mic
 //  if (state === 0 && mic.enabled) {
 if (key == 'a') {
+
+    //create a bar which grows while the sampling is happening
+    if (sampling=='false'){sampleLength=0};
+    sampling='true';
+
     // record to our p5.SoundFile
     recorder.record(soundFile);
     fill(255,0,0);
@@ -116,12 +133,15 @@ if (key == 'a') {
   if (key == 'n') {x=0;loopLength=60;}
   if (key == 'm') {x=0;loopLength=70;}
 
-  if (key == 'q') {soundFile.rate(0.5);}
-  if (key == 'w') {soundFile.rate(1);}
-  if (key == 'e') {soundFile.rate(1.3);}
+  if (key == 'q') {soundFile.rate(playRate/2);}
+  if (key == 'w') {playRate=1;soundFile.rate(1);}
+  if (key == 'e') {soundFile.rate(playRate*1.3);}
+
+  //add a kick drum
+  if (key == 'h') {kickPosition=x;playKick='true'}
 
   //reverb and delay kill switch
-  if (key == 'y'){delayTime=0;feedback=0;reverbTime=0;reverbDecay=0;newReverb='true'}
+  if (key == 'y'){delayTime=0;feedback=0;reverbTime=0;reverbDecay=0;reverb.disconnect();}
 
   //delay.process() accepts 4 parameters:
   //source, delayTime, feedback, filter frequency
@@ -132,17 +152,22 @@ if (key == 'a') {
 
   //connect soundFile to reverb
   if (key == 'r') {if(reverbTime<=7){if(reverbTime==0){reverb = new p5.Reverb()};reverbTime=reverbTime+1;newReverb='true'}}
-  if (key == 'f') {if(reverbTime>0){reverbTime=reverbTime-1;newReverb='true';if(reverbTime==0){reverb.disconnect()};}}
-  if (key == 't') {if(reverbDecay<=100){reverbDecay=reverbDecay+20;newReverb='true'}}
-  if (key == 'g') {if(reverbDecay>1){reverbDecay=reverbDecay-20;newReverb='true'}}
+  if (key == 'f') {if(reverbTime>0){reverbTime=reverbTime-1;newReverb='true';if(reverbTime==0){reverb.disconnect()}}}
+  if (key == 't') {if(reverbDecay<=100){reverbDecay=reverbDecay+10;newReverb='true'}}
+  if (key == 'g') {if(reverbDecay>1){reverbDecay=reverbDecay-10;newReverb='true'}}
+
+  //adjust playback create
+  if (key == '2') {playRate=playRate+0.1;}
+  if (key == '1') {if(playRate>0.1){playRate=playRate-0.1}}
 
   //adjust loop length
-  if (key == 'p') {loopLength++;}
+  if (key == 'p') {loopLength++}
   if (key == 'l') {loopLength--;}
 }
 
 function keyReleased() {
   recorder.stop();
+  sampling='false';
 }
 
 function mouseClicked()
