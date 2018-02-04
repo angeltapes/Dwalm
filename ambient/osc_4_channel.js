@@ -1,8 +1,6 @@
 //basic: 2 oscillators
-var osc1;
-var osc2;
-var osc3;
-var osc4;
+var osc1,osc2,osc3,osc4;
+var osc1control,osc2control,osc3control,osc4control;
 var oscType;
 var x;
 var mic, recorder1, soundFile,gotSoundFile;
@@ -17,6 +15,10 @@ function setup() {
   osc2 = new p5.Oscillator();
   osc3 = new p5.Oscillator();
   osc4 = new p5.Oscillator();
+  osc1control='enabled';
+  osc2control='enabled';
+  osc4control='enabled';
+
   osc1.setType('sine');
   osc2.setType('triangle');
   osc3.setType('sawtooth');
@@ -49,7 +51,8 @@ function setup() {
   function draw(){
     x=x+1;
     if (x==300){x=0};
-
+    osc1.amp((3000-mouseX)/3000);
+    //osc4.amp(mouseX/3000);
     if (oscType=='sine'){
     fill(255-x,20+x,200-x/2);
     ellipse(mouseX,mouseY,mouseX-pmouseX+x,mouseY-pmouseY+x);
@@ -82,7 +85,7 @@ function setup() {
     fill(144,144,0);
     rect(3*width/5,3*height/5,width/8,height/4);
 
-    osc1.freq(mouseX);
+    osc1.freq(height-mouseY);
     osc2.freq(mouseX/2);
     osc3.freq(2*mouseX);
     osc4.freq(mouseX/1);
@@ -104,31 +107,13 @@ function setup() {
     reverb.process(osc4,mouseY/2000,0.8,0.5);
   }
 
-//try multiple rainbow squares
+  //try multiple rainbow squares
   function touchStarted(){
-
-    if (mouseButton === LEFT) {
-      x=0;
-      if (mouseX<width/2&&mouseY<height/2){osc1.start();oscType='sine';};
-      if (mouseX>width/2&&mouseY<height/2){osc2.start();oscType='triangle'};
-      if (mouseX<width/2&&mouseY>height/2){osc3.start();oscType='square'};
-      if (mouseX>width/2&&mouseY>height/2){osc4.start();oscType='sawtooth'};
-    }
-
-    if (mouseButton === CENTER) {
-      soundFile.play(0,1,1,0,10);
-      fill(random(0,255),random(0,255),random(0,255));
-      ellipse(mouseX,mouseY,x,x);
-    }
-
-    if (mouseButton === RIGHT) {
-      if (mouseX<width/2&&mouseY<height/2){osc1.start();oscType='sine';};
-      recorder.record(soundFile);
-      fill(random(0,255),random(0,255),random(0,255));
-      ellipse (random(0,width),random(0,height),50,50)
-      gotSoundFile=true;
-    }
-
+    x=0;
+    if (osc1control=='enabled'){osc1.start();}
+  //  if (osc2control=='enabled'){osc2.start();}
+    //if (osc3control=='enabled'){osc3.start();}
+    //if (osc4control=='enabled'){osc4.start();}
   }
 
   function touchEnded(){
@@ -204,12 +189,3 @@ function setup() {
     recorder.stop();
   //  osc1.stop();
   }
-
-  //disable Firefox's right-click context menu
-  document.oncontextmenu = function () { // Use document as opposed to window for IE8 compatibility
-    return false;
-  };
-
-  window.addEventListener('contextmenu', function (e) { // Not compatible with IE < 9
-    e.preventDefault();
-  }, false);

@@ -1,4 +1,4 @@
-var mic, recorder1, soundFile,gotSoundFile,x,sampleLength,loopLength,playRate,kick,playKick,kickPosition,sampling,delayTime,feedback,filterFrequency,newReverb;
+var mic, recorder1, soundFile,gotSoundFile,x,sampleLength,loopLength,loopStarted,playRate,kick,playKick,kickPosition,sampling,delayTime,feedback,newReverb,tempo;
 
 function preload(){
   //create some preloaded percussion
@@ -30,12 +30,14 @@ function setup() {
   fill(255,255,255);
   sampling='false';
   gotSoundFile='false';
+  loopStarted='false';
   playKick='false';
-  x=9999;
+  x=0;
   sampleLength=0;
   loopLength=100;
   playRate=1;
   soundFile.rate(playRate);
+
 
   //delay set up
   delay = new p5.Delay();
@@ -47,11 +49,13 @@ function setup() {
   reverb = new p5.Reverb();
   reverbTime=0;
   reverbDecay=1;
+  tempo=1;
 }
 
 function draw(){
   background(0);
-  x++;
+  text(x,10,10);
+  x=x+tempo;
   textSize(36);
   rect(50,100,sampleLength,25);
 
@@ -59,12 +63,12 @@ function draw(){
     sampleLength++;
   }
 
-  if (gotSoundFile=='false'){
+  if (gotSoundFile=='false'&&loopStarted=='false'){
     fill(255,255,255)
     text("Hold down A to record a loop",50,80);
   }
 
-  if (gotSoundFile=='true'&&x>loopLength){
+  if (gotSoundFile=='true'&&loopStarted=='false'){
     fill(255,255,0);
     text("Click S to start looping",50,80)
   }
@@ -94,18 +98,19 @@ function draw(){
     rect(350,480,feedback*200,50);
   }
 
-  if (x==loopLength){
-    //fill(0,255,0);
-    //rect(50,100,loopLength,50);
+  if (int(x)==loopLength%32&&playKick=='true'){
+    kick.play();
+  }
+
+  if (x>loopLength&&loopStarted=='true'){
     if(newReverb=='true'){
       reverb.process(soundFile,reverbTime,reverbDecay);
     };
-
     soundFile.rate(playRate);
-    soundFile.play();x=0;}
-    if (x==kickPosition&&playKick=='true'){kick.play()};
-    delay.process(soundFile, delayTime, feedback, filterFrequency);
+    soundFile.play();
+    x=0;}
 
+    delay.process(soundFile,delayTime,feedback,999);
   }
 
 function keyTyped() {
@@ -123,22 +128,38 @@ if (key == 'a') {
     gotSoundFile='true'
   }
 
-  if (key == 's') {x=0;}
+  //stop
+  if (key == 's') {x=0;loopStarted='true'}
+
+  //start
   if (key == 'd') {x=999;}
+
+  //adjust loop length
   if (key == 'z') {x=0;loopLength=10;}
   if (key == 'x') {x=0;loopLength=20;}
   if (key == 'c') {x=0;loopLength=30;}
-  if (key == 'v') {x=0;loopLength=40;}
-  if (key == 'b') {x=0;loopLength=50;}
-  if (key == 'n') {x=0;loopLength=60;}
-  if (key == 'm') {x=0;loopLength=70;}
+  if (key == 'v') {x=0;loopLength=50;}
+  if (key == 'b') {x=0;loopLength=70;}
+
+  //adjust loop length by increments
+  if (key == 'n') {loopLength--;}
+  if (key == 'm') {loopLength++;}
+
+  //spare
+  if (key == 'p') {tempo=tempo+(1/60);}
+  if (key == 'l') {tempo=tempo-(1/60);}
 
   if (key == 'q') {soundFile.rate(playRate/2);}
   if (key == 'w') {playRate=1;soundFile.rate(1);}
   if (key == 'e') {soundFile.rate(playRate*1.3);}
 
   //add a kick drum
-  if (key == 'h') {kickPosition=x;playKick='true'}
+  if (key == 'h') {
+    if (playKick=='true'){playKick='false'}
+    else if (playKick=='false'){playKick='true';
+    loopLength=loopLength+loopLength%32
+  }
+}
 
   //reverb and delay kill switch
   if (key == 'y'){delayTime=0;feedback=0;reverbTime=0;reverbDecay=0;reverb.disconnect();}
@@ -160,9 +181,6 @@ if (key == 'a') {
   if (key == '2') {playRate=playRate+0.1;}
   if (key == '1') {if(playRate>0.1){playRate=playRate-0.1}}
 
-  //adjust loop length
-  if (key == 'p') {loopLength++}
-  if (key == 'l') {loopLength--;}
 }
 
 function keyReleased() {
