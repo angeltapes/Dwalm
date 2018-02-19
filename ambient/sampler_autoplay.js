@@ -1,4 +1,4 @@
-var mic, recorder1, soundFile,gotSoundFile,x,sampleLength,loopLength,loopStarted,playRate,kick,playKick,kickPosition,sampling,delayTime,feedback,newReverb,tempo;
+var mic, recorder, soundFile,gotSoundFile,x,sampleLength,loopLength,loopStarted,playRate,kick,playKick,kickPosition,sampling,delayTime,feedback,newReverb,tempo;
 
 function preload(){
   //create some preloaded percussion
@@ -54,7 +54,7 @@ function setup() {
 
 function draw(){
   background(0);
-  text(x,10,10);
+  //text(x,10,10);
   x=x+tempo;
   textSize(36);
   rect(50,100,sampleLength,25);
@@ -145,10 +145,11 @@ if (key == 'a') {
   if (key == 'n') {loopLength--;}
   if (key == 'm') {loopLength++;}
 
-  //spare
+  //adjust the tempo - the frequency at which samples are played
   if (key == 'p') {tempo=tempo+(1/60);}
   if (key == 'l') {tempo=tempo-(1/60);}
 
+  //quickly change the play rate of the sound file
   if (key == 'q') {soundFile.rate(playRate/2);}
   if (key == 'w') {playRate=1;soundFile.rate(1);}
   if (key == 'e') {soundFile.rate(playRate*1.3);}

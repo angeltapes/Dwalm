@@ -85,6 +85,7 @@ function setup() {
 //try multiple rainbow squares
   function touchStarted(){
     x=0;
+    soundFile.play(0,mouseX/1000,1,0,10);
     if (mouseX<width/2&&mouseY<height/2){osc1.start();}
     if (mouseX>width/2&&mouseY<height/2){osc2.start();}
     if (mouseX<width/2&&mouseY>height/2){osc3.start();}
