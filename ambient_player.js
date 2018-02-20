@@ -41,7 +41,12 @@ function draw() {
     vertex(i, map(spectrum[i], 0, 255, height, 0) );
    }
    endShape();
-   text(fft.analyze(),50,50);
+   //text(fft.analyze(),50,50);
+
+   text (Math.max.apply(null, spectrum),50,50);
+
+   //try this to trigger a sound on the note A -
+  //  if (spectrum[55]==Math.max.apply(null, spectrum)){fill(100,155,spectrum[55]);ellipse(250,spectrum[55],50,50);osc.freq(110);envelope.play(osc, 0, 0.1);}
 
 
   //taken from https://en.wikipedia.org/wiki/Piano_key_frequencies
