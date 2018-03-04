@@ -29,7 +29,12 @@ function setup() {
 function draw(){
   background(0);
   fill(255);
-  text(type,100,100);
+  text("Voice:",50,110);
+  text(type,170,110);
+  text("Root frequency:",50,130);
+  text(root,170,130);
+  text("Ratio:",50,150);
+  text(frequency/root,170,150);
   osc1.amp(x/100);
   osc1.freq(frequency);
   osc2.freq(mouseX/2);
@@ -41,6 +46,7 @@ function draw(){
 
 function keyTyped() {
   x=100;
+  //adjust the amount root is multiplied by to change the scale. 
   if (key == 'a') {
     frequency=root;
   }
@@ -71,7 +77,8 @@ function keyTyped() {
 
 //top keys
   if (key == 'q') {
-    frequency=root*0.5;
+    root=440;
+    frequency=root;
   }
   if (key == 'w') {
     frequency=root*1.08;
@@ -80,7 +87,7 @@ function keyTyped() {
     frequency=root*1.21;
   }
   if (key == 'r') {
-    osc1.freq(180);
+    //blank
   }
   if (key == 't') {
     frequency=root*1.43;
@@ -92,33 +99,39 @@ function keyTyped() {
     frequency=root*1.72;
   }
   if (key == 'i') {
-    osc1.freq(850);
+    //blank
   }
   if (key == 'o') {
-    osc1.freq(1000);
+    //blank
   }
   if (key == 'p') {
-    osc1.freq(1040);
+    //blank
   }
 
   //bottom keys
     if (key == 'z') {
-      osc1.freq(220);
+      root=root+1;
+      frequency=root;
     }
     if (key == 'x') {
-      osc1.freq(250);
+      root=root-1;
+      frequency=root;
     }
     if (key == 'c') {
-      osc1.freq(280);
+      root=root+10;
+      frequency=root;
     }
     if (key == 'v') {
-      osc1.freq(310);
+      root=root-10;
+      frequency=root;
     }
     if (key == 'b') {
-      osc1.freq(350);
+      root=root+20;
+      frequency=root;
     }
     if (key == 'n') {
-      osc1.freq(390);
+      root=root+20;
+      frequency=root;
     }
     if (key == 'm') {
       osc1.freq(430);
