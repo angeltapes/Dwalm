@@ -31,7 +31,7 @@ function draw(){
   fill(255);
   text("Voice:",50,110);
   text(type,170,110);
-  text("Root frequency:",50,130);
+  text("Root frequency (Hz):",50,130);
   text(root,170,130);
   text("Ratio:",50,150);
   text(frequency/root,170,150);
@@ -46,7 +46,7 @@ function draw(){
 
 function keyTyped() {
   x=100;
-  //adjust the amount root is multiplied by to change the scale. 
+  //adjust the amount root is multiplied by to change the scale.
   if (key == 'a') {
     frequency=root;
   }
